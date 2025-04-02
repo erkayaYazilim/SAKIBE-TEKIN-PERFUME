@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SAKİBE TEKİN PERFUME</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #pdfFrame {
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Tarayıcı toolbar'ını gizleme parametreleri -->
+    <iframe 
+        id="pdfFrame"
+        src="qrpdf.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitH"
+        frameborder="0"
+        allowfullscreen
+    >
+        <p>Tarayıcı desteklemiyor: <a href="qrpdf.pdf">PDF'yi indir</a></p>
+    </iframe>
+</body>
+</html>
