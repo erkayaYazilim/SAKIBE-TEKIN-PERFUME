@@ -1,39 +1,21 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8">
-  <title>PDF.js Module Örnek</title>
-</head>
-<body>
-  <canvas id="pdfCanvas"></canvas>
+<html lang="en">
+  <head>
+    <title>PDF Viewer</title>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>PDF Viewer</h1>
 
-  <!-- ES Modules: type="module" -->
-  <script type="module">
-    import * as pdfjsLib from './pdf.mjs';
-    pdfjsLib.GlobalWorkerOptions.workerSrc = './pdf.worker.mjs';
+    <div class="controls">
+      <button id="previous" class="previous">&laquo; Previous</button>
+      <p id="pageNumber">Page 1 of 1</p>
+      <button id="next" class="next">Next &raquo;</button>
+    </div>
 
-    const url = 'qrpdf.pdf';
+    <canvas id="canvas"></canvas>
 
-    const canvas = document.getElementById('pdfCanvas');
-    const context = canvas.getContext('2d');
-
-    pdfjsLib.getDocument(url).promise.then(pdf => {
-      return pdf.getPage(1);
-    }).then(page => {
-      const scale = 1.5;
-      const viewport = page.getViewport({ scale });
-
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-
-      const renderContext = {
-        canvasContext: context,
-        viewport: viewport
-      };
-      page.render(renderContext);
-    }).catch(err => {
-      console.error('PDF yükleme hatası:', err);
-    });
-  </script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>
