@@ -1,68 +1,283 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <title>PDF.js Basit Örnek (CDN)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAKİBE TEKİN PERFUME - Exclusive Collection</title>
+
+  <!-- PDF.js'in tarayıcı sürümü (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.5.141/build/pdf.min.js"></script>
+
+  <!-- Yazı Tipleri -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   
-  <!-- PDF.js'in tarayıcı için hazırlanmış sürümünü CDN'den yüklüyoruz -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.5.141/build/pdf.min.js"
-    type="text/javascript"
-  ></script>
-
-  <!-- Worker dosyası (pdf.worker.js) için de yol verelim -->
-  <script type="text/javascript">
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.5.141/build/pdf.worker.min.js";
-  </script>
-
   <style>
-    body {
+    /* Temel Renk Değişkenleri */
+    :root {
+      --primary-black: #1a1a1a;
+      --luxe-gold: #D4AF37;
+      --pure-white: #ffffff;
+    }
+
+    /* Sayfa Sıfırlama */
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
     }
+    body {
+      background: var(--pure-white);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Preloader (Yükleniyor) Stilleri */
+    .preloader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--pure-white);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity 1s ease;
+    }
+
+    .perfume-loader {
+      width: 120px;
+      height: 220px;
+      position: relative;
+      margin: 2rem 0;
+    }
+    .gold-bottle {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 85%;
+      background: linear-gradient(45deg, var(--luxe-gold) 0%, #FFD700 50%, var(--luxe-gold) 100%);
+      border-radius: 15px 15px 30px 30px;
+      box-shadow: 0 10px 30px rgba(212,175,55,0.3);
+      animation: bottleGlow 2s ease-in-out infinite;
+    }
+    .bottle-neck {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 40px;
+      background: var(--primary-black);
+      border-radius: 5px;
+    }
+    .splash {
+      position: absolute;
+      top: -50px;
+      left: 50%;
+      width: 80px;
+      height: 80px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      opacity: 0;
+      animation: perfumeSplash 2s infinite;
+    }
+    @keyframes bottleGlow {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.02); opacity: 1; }
+    }
+    @keyframes perfumeSplash {
+      0% {
+        transform: translate(-50%, 0) scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -100px) scale(2);
+        opacity: 0;
+      }
+    }
+
+    /* Başlık / Header Bölümü */
+    .header-container {
+      text-align: center;
+      background: var(--primary-black);
+      color: var(--luxe-gold);
+      padding: 2rem 1rem;  /* Masaüstü için üst-alt boşluk */
+      overflow: hidden;
+    }
+    .title-animation {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      transform: translateY(50px);
+      animation: titleReveal 1.5s ease-out 0.5s forwards;
+    }
+    .subtitle {
+      margin-top: 0.5rem;
+      color: var(--luxe-gold);
+      font-weight: 600;
+    }
+    @keyframes titleReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* PDF Container */
     #pdfContainer {
-      width: 90%;
-      margin: 20px auto;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s ease;
     }
-    #pdfCanvas {
-      border: 1px solid #ccc;
+    /* Preloader kalktıktan sonra görünür hale gelsin */
+    body.loaded #pdfContainer {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Her PDF sayfasını saran kutu */
+    .pdf-page-container {
+      margin-bottom: 2rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--pure-white);
+      position: relative;
+    }
+
+    /* Canvas tam genişlikte görüntülensin */
+    .pdf-canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Ekran boyutuna göre uyarlamalar */
+    @media (max-width: 768px) {
+      .header-container {
+        padding: 1.5rem 1rem;  /* Tablet vb. için */
+      }
+      .title-animation {
+        font-size: 2rem;
+      }
+      .pdf-page-container {
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-container {
+        padding: 1rem; /* Daha küçük telefonlar için */
+      }
+      .title-animation {
+        font-size: 1.6rem;
+      }
+      .subtitle {
+        font-size: 1rem;
+      }
     }
   </style>
-
 </head>
 <body>
-
-  <h1>PDF.js CDN Demo</h1>
-  <div id="pdfContainer">
-    <canvas id="pdfCanvas"></canvas>
+  <!-- Preloader -->
+  <div class="preloader" id="preloader">
+    <div class="perfume-loader">
+      <div class="gold-bottle"></div>
+      <div class="bottle-neck"></div>
+      <div class="splash"></div>
+    </div>
   </div>
 
-  <script type="text/javascript">
-    // PDF dosyasının URL'sini buraya yazın
-    const pdfURL = "./qrpdf.pdf";
- // Örneğin bir sunucuda duran PDF dosyası
+  <!-- Üst Kısım -->
+  <div class="header-container">
+    <h1 class="title-animation">SAKİBE TEKİN PERFUME</h1>
+    <p class="subtitle">Exclusive Collection 2025</p>
+  </div>
 
-    // PDF dosyasını yükle
-    pdfjsLib.getDocument(pdfURL).promise.then(function(pdf) {
-      // 1. sayfayı alalım
-      pdf.getPage(1).then(function(page) {
-        const scale = 1.0;
-        const viewport = page.getViewport({ scale: scale });
+  <!-- PDF Gösterim Alanı -->
+  <div id="pdfContainer"></div>
 
-        const canvas = document.getElementById("pdfCanvas");
-        const context = canvas.getContext("2d");
+  <script>
+    // PDF.js Worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.5.141/build/pdf.worker.min.js";
 
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
+    // Preloader Yönetimi
+    window.addEventListener('load', () => {
+      // Preloader'ı 3 saniye göstereceğiz (örnek animasyon süresi)
+      setTimeout(() => {
+        document.getElementById('preloader').style.opacity = '0';
+        document.body.classList.add('loaded');
+        setTimeout(() => {
+          document.getElementById('preloader').style.display = 'none';
+        }, 1000);
+      }, 3000);
 
-        const renderContext = {
-          canvasContext: context,
-          viewport: viewport
-        };
-        page.render(renderContext);
-      });
+      // PDF dosyasını indirmeye başlayalım
+      loadPDF();
+    });
+
+    const pdfURL = "./qrpdf.pdf"; // Aynı klasörde yer alan PDF
+    let pdfDoc = null;
+
+    async function loadPDF() {
+      try {
+        pdfDoc = await pdfjsLib.getDocument(pdfURL).promise;
+        renderAllPages();
+      } catch (err) {
+        console.error("PDF yükleme hatası:", err);
+      }
+    }
+
+    // Tüm sayfaları sırayla çiz
+    async function renderAllPages() {
+      const container = document.getElementById('pdfContainer');
+      container.innerHTML = '';  // Yeniden boyutlandırma durumunda sayfaları temizle
+
+      for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+        const page = await pdfDoc.getPage(pageNum);
+
+        // Sayfa için bir div oluştur
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'pdf-page-container';
+
+        // Canvas oluştur
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-canvas';
+        pageDiv.appendChild(canvas);
+        container.appendChild(pageDiv);
+
+        // Viewport ölçüleri
+        const viewport = page.getViewport({ scale: 1 });
+        // Container genişliğini baz alarak ölçek hesapla
+        const containerWidth = container.clientWidth - 40; // Kenar boşlukları için
+        const scale = containerWidth / viewport.width;
+        const scaledViewport = page.getViewport({ scale });
+
+        canvas.width = scaledViewport.width;
+        canvas.height = scaledViewport.height;
+
+        const ctx = canvas.getContext('2d');
+        await page.render({
+          canvasContext: ctx,
+          viewport: scaledViewport
+        }).promise;
+      }
+    }
+
+    // Ekran boyutu değişirse PDF sayfalarını tekrar çiz
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (pdfDoc) {
+          renderAllPages();
+        }
+      }, 200);
     });
   </script>
 </body>
