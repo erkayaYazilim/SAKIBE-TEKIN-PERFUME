@@ -1,21 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>PDF Viewer</title>
-    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <h1>PDF Viewer</h1>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Katalog Sayfası</title>
+  <style>
+    /* Basit bir stil örneği */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    .pdf-container {
+      width: 100%;
+      height: 100vh; /* PDF’yi tam sayfa yükseklikte göstermek isterseniz */
+      border: none;
+    }
+  </style>
+</head>
+<body>
 
-    <div class="controls">
-      <button id="previous" class="previous">&laquo; Previous</button>
-      <p id="pageNumber">Page 1 of 1</p>
-      <button id="next" class="next">Next &raquo;</button>
-    </div>
+  <iframe 
+    src="qrpdf.pdf" 
+    class="pdf-container"
+  >
+  </iframe>
 
-    <canvas id="canvas"></canvas>
-
-    <script src="app.js"></script>
-  </body>
+</body>
 </html>
