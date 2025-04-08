@@ -1,37 +1,34 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SAKİBE TEKİN PERFUME - Exclusive Collection</title>
 
-  <!-- PDF.js'in tarayıcı sürümü (CDN) -->
+  <!-- PDF.js (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.5.141/build/pdf.min.js"></script>
 
   <!-- Yazı Tipleri -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   
   <style>
-    /* Temel Renk Değişkenleri */
     :root {
       --primary-black: #1a1a1a;
       --luxe-gold: #D4AF37;
       --pure-white: #ffffff;
     }
-
-    /* Tarayıcı Sıfırlama ve Temel Stil */
+    /* Sıfırlama */
     * {
+      margin: 0; padding: 0;
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
     body {
       background: var(--pure-white);
       font-family: 'Montserrat', sans-serif;
-      overflow-x: hidden; /* Yatay kaydırma olmasın */
+      overflow-x: hidden;
     }
 
-    /* Preloader (Yükleniyor) Stilleri */
+    /* Preloader (Parfüm Şişesi Animasyonu) */
     .preloader {
       position: fixed;
       top: 0; left: 0;
@@ -48,7 +45,6 @@
       width: 120px;
       height: 220px;
       position: relative;
-      margin: 2rem 0;
     }
     .gold-bottle {
       position: absolute;
@@ -82,8 +78,14 @@
       animation: perfumeSplash 2s infinite;
     }
     @keyframes bottleGlow {
-      0%, 100% { transform: scale(1); opacity: 0.9; }
-      50% { transform: scale(1.02); opacity: 1; }
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.9;
+      }
+      50% {
+        transform: scale(1.02);
+        opacity: 1;
+      }
     }
     @keyframes perfumeSplash {
       0% {
@@ -96,27 +98,20 @@
       }
     }
 
-    /* Üst Kısım (Header) */
+    /* Header (Üst Kısım) */
     .header-container {
       text-align: center;
       background: var(--primary-black);
       color: var(--luxe-gold);
-      padding: 1.8rem 1rem; /* Biraz daha kısık yükseklik */
-      overflow: hidden;
+      padding: 1.4rem 1rem;
       position: relative;
     }
     .title-animation {
       font-family: 'Cinzel Decorative', cursive;
-      font-size: 2.4rem;
-      margin-bottom: 0.4rem;
+      font-size: 2rem;
       opacity: 0;
-      transform: translateY(50px);
-      animation: titleReveal 1.2s ease-out 0.3s forwards;
-    }
-    .subtitle {
-      margin-top: 0.2rem;
-      color: var(--luxe-gold);
-      font-weight: 600;
+      transform: translateY(20px);
+      animation: titleReveal 0.8s ease-out 0.2s forwards;
     }
     @keyframes titleReveal {
       to {
@@ -128,62 +123,34 @@
     /* PDF Container */
     #pdfContainer {
       max-width: 1200px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
-      opacity: 0;            /* Preloader kalkana kadar gizli */
-      transform: translateY(20px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      margin: 1rem auto;
+      padding: 1rem;
     }
-    /* Preloader kalktıktan sonra görünür hale gelsin */
-    body.loaded #pdfContainer {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Her PDF sayfasını saran kutu */
     .pdf-page-container {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       border-radius: 8px;
-      overflow: hidden;
       background: var(--pure-white);
-      position: relative;
+      overflow: hidden;
     }
-
-    /* Canvas tam genişlikte görüntülensin */
     .pdf-canvas {
       width: 100%;
       height: auto;
       display: block;
     }
 
-    /* Ekran boyutuna göre uyarlamalar */
     @media (max-width: 768px) {
-      .header-container {
-        padding: 1.2rem 1rem;
-      }
       .title-animation {
-        font-size: 2rem;
+        font-size: 1.6rem;
       }
       .pdf-page-container {
         margin-bottom: 1rem;
       }
     }
-    @media (max-width: 480px) {
-      .header-container {
-        padding: 1rem;
-      }
-      .title-animation {
-        font-size: 1.6rem;
-      }
-      .subtitle {
-        font-size: 1rem;
-      }
-    }
   </style>
 </head>
 <body>
-  <!-- Preloader (Yükleniyor Ekranı) -->
+  <!-- Preloader -->
   <div class="preloader" id="preloader">
     <div class="perfume-loader">
       <div class="gold-bottle"></div>
@@ -192,7 +159,7 @@
     </div>
   </div>
 
-  <!-- Üst Kısım (Header) -->
+  <!-- Üst Kısım -->
   <div class="header-container">
     <h1 class="title-animation">SAKİBE TEKİN PERFUME</h1>
   </div>
@@ -201,91 +168,83 @@
   <div id="pdfContainer"></div>
 
   <script>
-    // PDF.js Worker ayarı
+    // PDF.js Worker
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.5.141/build/pdf.worker.min.js";
 
-    // PDF Yolu (Aynı klasörde qrpdf.pdf varsa)
-    const pdfURL = "./qrpdf.pdf";
+    const pdfURL = "./qrpdf.pdf"; // Kataloğunuzun PDF dosyası
     let pdfDoc = null;
+    let firstPageRendered = false; // İlk sayfa çizildi mi?
 
-    // Sayfa tamamen yüklendiğinde
     window.addEventListener('load', () => {
-      // PDF'yi yükleyip render işlemini başlat
       loadPDF();
     });
 
-    // PDF yükleme ve sayfaları tek tek render etme
     async function loadPDF() {
       try {
+        // PDF Belgesini indir ve hazırla
         pdfDoc = await pdfjsLib.getDocument(pdfURL).promise;
-        // Tüm sayfaları çizdikten sonra preloader'ı kapatacağız
-        await renderAllPages();
 
-        // Artık preloader'ı kapatabiliriz
-        hidePreloader();
-      } catch (err) {
-        console.error("PDF yükleme hatası:", err);
+        // 1) İlk sayfa hızlı render
+        await renderPage(1, true); // 'true' => preloader kapamak için kontrol
+
+        // 2) Kalan sayfaları arka planda yükle
+        for(let pageNum = 2; pageNum <= pdfDoc.numPages; pageNum++){
+          renderPage(pageNum, false);
+        }
+      } catch (error) {
+        console.error("PDF yükleme hatası:", error);
         hidePreloader(); // Hata olsa da preloader kapanmalı
       }
     }
 
-    // Tüm sayfaları arka planda çizip, en son DOM'a ekle
-    async function renderAllPages() {
+    /**
+     * Tek bir sayfayı ekrana çizme fonksiyonu.
+     * @param {number} pageNum - Çizilecek sayfa
+     * @param {boolean} canHidePreloader - İlk sayfa için preloader kapatılabilir
+     */
+    async function renderPage(pageNum, canHidePreloader) {
+      const page = await pdfDoc.getPage(pageNum);
+
+      // PDF kapsayıcısı
       const container = document.getElementById('pdfContainer');
-      container.innerHTML = '';
+      
+      // Sayfa wrapper
+      const pageDiv = document.createElement('div');
+      pageDiv.className = 'pdf-page-container';
 
-      // Performans ve reflow sorunlarını azaltmak için,
-      // önce bir "document fragment" içinde sayfaları oluşturalım
-      const fragment = document.createDocumentFragment();
+      // Canvas
+      const canvas = document.createElement('canvas');
+      canvas.className = 'pdf-canvas';
+      pageDiv.appendChild(canvas);
 
-      for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
-        const page = await pdfDoc.getPage(pageNum);
+      container.appendChild(pageDiv);
 
-        // Sayfa kabı
-        const pageDiv = document.createElement('div');
-        pageDiv.className = 'pdf-page-container';
+      // Ölçek hesaplama
+      const viewport = page.getViewport({ scale: 1 });
+      const containerWidth = container.clientWidth - 40;
+      const scale = containerWidth / viewport.width;
+      const scaledViewport = page.getViewport({ scale });
 
-        // Canvas
-        const canvas = document.createElement('canvas');
-        canvas.className = 'pdf-canvas';
-        pageDiv.appendChild(canvas);
+      canvas.width = scaledViewport.width;
+      canvas.height = scaledViewport.height;
 
-        // Viewport ölçüleri (tam ölçek: 1)
-        const viewport = page.getViewport({ scale: 1 });
-        // Container genişliğini baz alarak ölçek hesapla (bir miktar iç boşluk düşelim)
-        const containerWidth = container.clientWidth - 40;
-        const scale = containerWidth / viewport.width;
-        const scaledViewport = page.getViewport({ scale });
+      const ctx = canvas.getContext('2d');
+      await page.render({
+        canvasContext: ctx,
+        viewport: scaledViewport
+      }).promise;
 
-        // Canvas boyutlarını ayarla
-        canvas.width = scaledViewport.width;
-        canvas.height = scaledViewport.height;
-
-        const ctx = canvas.getContext('2d');
-        // Sayfayı canvas'a render et
-        await page.render({
-          canvasContext: ctx,
-          viewport: scaledViewport
-        }).promise;
-
-        // Oluşturduğumuz sayfa div'ini fragmente ekleyelim
-        fragment.appendChild(pageDiv);
+      // Eğer ilk sayfaysa ve henüz kapatılmadıysa preloader'ı kapat
+      if (canHidePreloader && !firstPageRendered) {
+        firstPageRendered = true;
+        hidePreloader();
       }
-
-      // Tüm sayfalar çizildikten sonra en sona container'a ekliyoruz
-      container.appendChild(fragment);
     }
 
-    // Preloader'ı gizleme
     function hidePreloader() {
       const preloader = document.getElementById('preloader');
-      // Preloader opaklığını 0 yap
       preloader.style.opacity = '0';
-      // Body'e "loaded" sınıfı ekle -> #pdfContainer animasyonla görünür
-      document.body.classList.add('loaded');
-
-      // Animasyon bitince tamamen gizle
       setTimeout(() => {
         preloader.style.display = 'none';
       }, 600);
